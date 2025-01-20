@@ -96,4 +96,3 @@ vim.keymap.set('n', '<leader>k', function () jump_to_today() end)
 vim.keymap.set('n', '<leader>l', function() jump(FORWARD) end)
 vim.keymap.set('n', '<leader>j', function() jump(BACKWARD) end)
 vim.api.nvim_create_user_command("CleanJournal", clean_journal, {})
-
