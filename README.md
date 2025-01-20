@@ -1,2 +1,2 @@
-# journal.nvim
-I NeoVim puglin to help journalling
+# Purpose
+A NeoVim plugin to help journalling.
