@@ -102,3 +102,5 @@ function M.clean_journal()
       end
    end
 end
+
+return M
