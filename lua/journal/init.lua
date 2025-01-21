@@ -8,6 +8,7 @@ local JOURNAL_DIR = "/Journal/"
 
 local function jump(direction)
    local current_buffer = vim.api.nvim_buf_get_name(0):match("(%d%d%d%d%-%d%d%-%d%d)")
+   print(current_buffer)
 
    if current_buffer == nil then
       print("current page name is not in the correct formate")
@@ -32,7 +33,7 @@ local function jump(direction)
    end
 end
 
-function M.jump_backwards()
+function M.jump_backward()
    jump(BACKWARD)
 end
 
