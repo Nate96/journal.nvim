@@ -1,5 +1,6 @@
 # Purpose
-A NeoVim plugin to help journalling.  
+A NeoVim plugin to help journalling. This plugin aims to mimic Daily Notes from   
+obsidian. https://help.obsidian.md/Plugins/Daily+notes.  
 
 
 # Install 
