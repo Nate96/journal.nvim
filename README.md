@@ -7,7 +7,7 @@ add `use 'Nate96/journal.nvim'` to packer.lua
 add desired shortcuts to `after/plugin/journal.lua`  
 
 ## Example of journal.lua
-'''lua
+'''lua   
 local J = require("journal")
 
 vim.keymap.set('n', '<leader>k', function () J.jump_to_today() end)
