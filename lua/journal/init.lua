@@ -1,4 +1,5 @@
-local utils = require("utils")
+local utils = require("journal.utils")
+
 local M = {}
 
 -- Directions
@@ -7,17 +8,19 @@ local BACKWARD = -1
 
 local JOURNAL_DIR = "/Journal/"
 
-
+--- Jumpes to the previous entry
 function M.jump_backward()
    local journal = vim.fn.getcwd() .. JOURNAL_DIR
    utils.jump(journal, BACKWARD)
 end
 
+--- Jumpes to the next entry
 function M.jump_forward()
    local journal = vim.fn.getcwd() .. JOURNAL_DIR
    utils.jump(journal,FORWARD)
 end
 
+--- Jumpes to the entry with the current os date
 function M.jump_to_today()
    local directory = vim.fn.getcwd() .. JOURNAL_DIR
    local stat = vim.loop.fs_stat(directory)
@@ -31,13 +34,12 @@ function M.jump_to_today()
    end
 end
 
+--- Deletes all empty entries
 function M.clean_journal()
    local directory = vim.fn.getcwd() .. JOURNAL_DIR
    local files = vim.fn.readdir(directory)
 
-   if files == nil then
-      print("cannot perform action")
-   else
+   if files ~= nil then
       for _, file in ipairs(files) do
          local f = io.open(directory .. file, "r")
          local file_size = -1
@@ -48,17 +50,21 @@ function M.clean_journal()
          end
 
          if file_size == 0 then
-            print("deleting:", file)
+            local SUCCESS = "successly deleted " .. file
             local success, err = os.remove(directory .. file)
+
             if success then
-               print("success")
+               print(SUCCESS)
             else
                print("Error:" , err)
             end
+
          elseif file_size == -1 then
             print("err")
          end
       end
+   else
+      print(JOURNAL_DIR, " does not exsist")
    end
 end
 
