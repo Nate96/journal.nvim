@@ -1,74 +1,33 @@
+local utils = require("utils")
 local M = {}
 
 -- Directions
 local FORWARD  =  1
 local BACKWARD = -1
+
 local JOURNAL_DIR = "/Journal/"
 
 
-local function jump(direction)
-   local current_buffer = vim.api.nvim_buf_get_name(0):match("(%d%d%d%d%-%d%d%-%d%d)")
-
-   if current_buffer == nil then
-      print("current page name is not in the correct formate")
-   else
-      local directory = vim.fn.getcwd() .. JOURNAL_DIR
-      local files = vim.fn.readdir(directory)
-
-      for index, file in ipairs(files) do
-         if file:match("(%d%d%d%d%-%d%d%-%d%d)") == current_buffer then
-            if index == 1 and direction == BACKWARD then
-               print("You are at the first entry cannot jump backwards")
-               break
-            elseif index == #files and direction == FORWARD then
-               print("You are at the last entry cannot jump forward")
-               break
-            else
-               vim.api.nvim_command("edit " .. directory .. files[index + direction])
-               break
-            end
-         end
-      end
-   end
-end
-
 function M.jump_backward()
-   jump(BACKWARD)
+   local journal = vim.fn.getcwd() .. JOURNAL_DIR
+   utils.jump(journal, BACKWARD)
 end
 
 function M.jump_forward()
-   jump(FORWARD)
+   local journal = vim.fn.getcwd() .. JOURNAL_DIR
+   utils.jump(journal,FORWARD)
 end
 
 function M.jump_to_today()
    local directory = vim.fn.getcwd() .. JOURNAL_DIR
    local stat = vim.loop.fs_stat(directory)
+   local PROMPT_1 = "Journal/ does not exsist, do you want to create Journal/? y/n: "
 
    if stat and stat.type == "directory" then
-      local files = vim.fn.readdir(directory)
-
-      if #files == 0 then
-         -- create in buffer with FORMAT: yyyy-mm-dd WEEKDAY
-         vim.api.nvim_command("edit " .. directory .. os.date("%Y-%m-%d") .. ' ' .. os.date("%A") .. ".md")
-      else
-         local last_file_name  = files[#files]:match("(%d%d%d%d%-%d%d%-%d%d)")
-         local current_file_name = vim.api.nvim_buf_get_name(0):match("(%d%d%d%d%-%d%d%-%d%d)")
-
-         if current_file_name == last_file_name or #files == 0 then
-            -- create in buffer with FORMAT: yyyy-mm-dd WEEKDAY
-            vim.api.nvim_command("edit " .. directory .. os.date("%Y-%m-%d") .. ' ' .. os.date("%A") .. ".md")
-         else
-            -- jump to last entry
-            vim.api.nvim_command("edit " .. directory .. files[#files])
-         end
-      end
-   else
-      if vim.fn.input("Journal/ does not exsist, do you want to create Journal/? y/n: ") == 'y' then
-         os.execute("mkdir " .. directory)
-
-         -- create in buffer wiht FORMAT: yyyy-mm-dd WEEKDAY
-         vim.api.nvim_command("edit " .. directory .. os.date("%Y-%m-%d") .. ' ' .. os.date("%A") .. ".md")
-      end
+      utils.create_today_entry(directory)
+   elseif vim.fn.input(PROMPT_1) == 'y' then
+      os.execute("mkdir " .. directory)
+      utils.create_today_entry(directory)
    end
 end
 
