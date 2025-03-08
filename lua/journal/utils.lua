@@ -53,4 +53,29 @@ function utils.create_today_entry(directory)
    nvim("w!")
 end
 
+
+function utils.search_for_key_word(directory, key_word)
+   local files = vim.fn.readdir(directory)
+
+   for i = 0, #files do
+      local file = io.open(directory .. files[#files - i], "r")
+
+      if not file then
+         print("error")
+         return
+      end
+
+      for line in file:lines() do
+         local match = string.find(line, key_word)
+
+         if match then
+            vim.api.nvim_command("edit" .. directory .. files[#files - i])
+            return
+         end
+      end
+   end
+
+   print("No log yet")
+end
+
 return utils

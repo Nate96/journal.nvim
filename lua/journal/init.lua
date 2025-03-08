@@ -50,11 +50,11 @@ function M.clean_journal()
          end
 
          if file_size == 0 then
-            local SUCCESS = "successly deleted " .. file
+            local SUCCESS_MESSAGE = "successly deleted " .. file
             local success, err = os.remove(directory .. file)
 
             if success then
-               print(SUCCESS)
+               print(SUCCESS_MESSAGE)
             else
                print("Error:" , err)
             end
@@ -65,6 +65,23 @@ function M.clean_journal()
       end
    else
       print(JOURNAL_DIR, " does not exsist")
+   end
+end
+
+function M.jump_to_log_type()
+   local PROMPT_1 = "Enter Log Type: "
+   local type = vim.fn.input(PROMPT_1)
+   local directory = vim.fn.getcwd() .. JOURNAL_DIR
+
+   local WEEK = "week"
+   local MONTH = "month"
+
+   if type == WEEK then
+      utils.search_for_key_word(directory, "# Weekly Log")
+   elseif type == MONTH then
+      utils.search_for_key_word(directory, "# Monthly Log")
+   else
+      print("Wrong log type.")
    end
 end
 
