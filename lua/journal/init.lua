@@ -68,18 +68,19 @@ function M.clean_journal()
    end
 end
 
+--- Opens the most recent Entry with the log type 
 function M.jump_to_log_type()
    local PROMPT_1 = "Enter Log Type: "
-   local type = vim.fn.input(PROMPT_1)
-   local directory = vim.fn.getcwd() .. JOURNAL_DIR
-
    local WEEK = "week"
    local MONTH = "month"
 
+   local directory = vim.fn.getcwd() .. JOURNAL_DIR
+   local type = vim.fn.input(PROMPT_1)
+
    if type == WEEK then
-      utils.search_for_key_word(directory, "# Weekly Log")
+      utils.get_most_recent_log_type(directory, "# Weekly Log")
    elseif type == MONTH then
-      utils.search_for_key_word(directory, "# Monthly Log")
+      utils.get_most_recent_log_type(directory, "# Monthly Log")
    else
       print("Wrong log type.")
    end

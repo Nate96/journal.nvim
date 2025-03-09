@@ -54,28 +54,29 @@ function utils.create_today_entry(directory)
 end
 
 
-function utils.search_for_key_word(directory, key_word)
+--- Iterates the Journal backwards to find the most recent log type
+--- @param directory string
+--- @param key_word string
+function utils.get_most_recent_log_type(directory, key_word)
    local files = vim.fn.readdir(directory)
 
-   for i = 0, #files do
-      local file = io.open(directory .. files[#files - i], "r")
+   for i = 1, #files do
+      local index = #files + 1 - i
+      local file = io.open(directory .. files[index], "r")
 
-      if not file then
-         print("error")
-         return
-      end
+      if file then
+         for line in file:lines() do
+            local match = string.find(line, key_word)
 
-      for line in file:lines() do
-         local match = string.find(line, key_word)
-
-         if match then
-            vim.api.nvim_command("edit" .. directory .. files[#files - i])
-            return
+            if match then
+               vim.api.nvim_command("edit" .. directory .. files[index])
+               return
+            end
          end
       end
    end
 
-   print("No log yet")
+    print("NOT FOUND")
 end
 
 return utils
