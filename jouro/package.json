@@ -14,8 +14,24 @@
   "contributes": {
     "commands": [
       {
-        "command": "jouro.helloWorld",
-        "title": "Hello World"
+        "command": "jouro.day",
+        "title": "day"
+      },
+      {
+        "command": "jouro.forward",
+        "title": "forward"
+      },
+      {
+        "command": "jouro.backward",
+        "title": "backward"
+      },
+      {
+        "command": "jouro.clean",
+        "title": "clean"
+      },
+      {
+        "command": "jouro.monthLog",
+        "title": "monthLog"
       }
     ]
   },
