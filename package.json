@@ -1,0 +1,63 @@
+{
+  "name": "jouro",
+  "displayName": "jouro",
+  "description": "Tool to help Journalling",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.99.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "jouro.day",
+        "title": "day"
+      },
+      {
+        "command": "jouro.forward",
+        "title": "forward"
+      },
+      {
+        "command": "jouro.backward",
+        "title": "backward"
+      },
+      {
+        "command": "jouro.clean",
+        "title": "clean"
+      },
+      {
+        "command": "jouro.monthLog",
+        "title": "monthLog"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src",
+    "test": "mocha -r ts-node/register *.test.ts",
+    "dont-test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "20.x",
+    "@types/vscode": "^1.99.0",
+    "@typescript-eslint/eslint-plugin": "^8.28.0",
+    "@typescript-eslint/parser": "^8.28.0",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.1",
+    "eslint": "^9.23.0",
+    "mocha": "^11.1.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "date-fns": "^4.1.0"
+  }
+}
