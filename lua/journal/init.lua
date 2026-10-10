@@ -6,37 +6,75 @@ local M = {}
 local FORWARD  =  1
 local BACKWARD = -1
 
-local JOURNAL_DIR = "/Journal/"
+--- Reads KEY=VALUE pairs from the plugin root's .env (git-ignored)
+--- @return table
+local function load_env()
+   local env = {}
+   local root = vim.fn.fnamemodify(debug.getinfo(1, "S").source:sub(2), ":p:h:h:h")
+   local f = io.open(root .. "/.env", "r")
+   if not f then return env end
+   for line in f:lines() do
+      local key, value = line:match("^%s*([%w_]+)%s*=%s*(.-)%s*$")
+      if key then env[key] = value:gsub('^["\'](.*)["\']$', "%1") end
+   end
+   f:close()
+   return env
+end
+
+local config = {
+   default_dir = load_env().JOURNAL_DEFAULT_DIR,
+}
+
+--- @param opts table|nil { default_dir = string }
+function M.setup(opts)
+   config = vim.tbl_extend("force", config, opts or {})
+end
+
+--- Walks up from the buffer's dir (fallback cwd) looking for Journal/ or Vault/Journal/
+--- @return string journal directory with trailing slash
+local function find_journal()
+   local start = vim.fn.expand("%:p:h")
+   if start == "" then start = vim.fn.getcwd() end
+   for dir in vim.fs.parents(start .. "/x") do
+      for _, p in ipairs({ dir .. "/Journal", dir .. "/Vault/Journal" }) do
+         if vim.fn.isdirectory(p) == 1 then return p .. "/" end
+      end
+   end
+   if config.default_dir and config.default_dir ~= "" then
+      return (vim.fn.expand(config.default_dir):gsub("/*$", "/"))
+   end
+   return vim.fn.getcwd() .. "/Journal/"
+end
 
 --- Jumpes to the previous entry
 function M.jump_backward()
-   local journal = vim.fn.getcwd() .. JOURNAL_DIR
+   local journal = find_journal()
    utils.jump(journal, BACKWARD)
 end
 
 --- Jumpes to the next entry
 function M.jump_forward()
-   local journal = vim.fn.getcwd() .. JOURNAL_DIR
+   local journal = find_journal()
    utils.jump(journal,FORWARD)
 end
 
 --- Jumpes to the entry with the current os date
 function M.jump_to_today()
-   local directory = vim.fn.getcwd() .. JOURNAL_DIR
+   local directory = find_journal()
    local stat = vim.loop.fs_stat(directory)
    local PROMPT_1 = "Journal/ does not exsist, do you want to create Journal/? y/n: "
 
    if stat and stat.type == "directory" then
       utils.create_today_entry(directory)
    elseif vim.fn.input(PROMPT_1) == 'y' then
-      os.execute("mkdir " .. directory)
+      vim.fn.mkdir(directory, "p")
       utils.create_today_entry(directory)
    end
 end
 
 --- Deletes all empty entries
 function M.clean_journal()
-   local directory = vim.fn.getcwd() .. JOURNAL_DIR
+   local directory = find_journal()
    local files = vim.fn.readdir(directory)
 
    if files ~= nil then
@@ -64,7 +102,7 @@ function M.clean_journal()
          end
       end
    else
-      print(JOURNAL_DIR, " does not exsist")
+      print(directory, " does not exsist")
    end
 end
 
@@ -74,7 +112,7 @@ function M.jump_to_log_type()
    local WEEK = "week"
    local MONTH = "month"
 
-   local directory = vim.fn.getcwd() .. JOURNAL_DIR
+   local directory = find_journal()
    local type = vim.fn.input(PROMPT_1)
 
    if type == WEEK then
