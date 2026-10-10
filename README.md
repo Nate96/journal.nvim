@@ -7,6 +7,19 @@ obsidian. https://help.obsidian.md/Plugins/Daily+notes.
 add `use 'Nate96/journal.nvim'` to packer.lua  
 add desired shortcuts to `after/plugin/journal.lua`  
 
+Requires NeoVim 0.10+.
+
+## Journal location
+The journal dir is found by walking up from the current buffer's dir (or cwd). At each parent
+it checks `<dir>/Journal`, then `<dir>/Vault/Journal`; the first hit wins. If none is found it
+falls back to `default_dir`:
+```
+require("journal").setup({ default_dir = "{defualt vault}" })
+```
+
+Only files named `YYYY-MM-DD*.md` count as entries. Panning keeps the alternate file
+(`<C-^>` returns to where you were) and wipes the previous unmodified entry buffer.
+
 ## Example of journal.lua
 ```  
 vim.keymap.set('n', "<leader>k", function () require("journal").jump_to_today() end)  
