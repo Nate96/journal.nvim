@@ -6,32 +6,8 @@ local M = {}
 local FORWARD  =  1
 local BACKWARD = -1
 
---- Reads KEY=VALUE pairs from the plugin root's .env (git-ignored)
---- @return table
-local function load_env()
-   local env = {}
-   local root = vim.fn.fnamemodify(debug.getinfo(1, "S").source:sub(2), ":p:h:h:h")
-   local f = io.open(root .. "/.env", "r")
-   if not f then return env end
-   for line in f:lines() do
-      local key, value = line:match("^%s*([%w_]+)%s*=%s*(.-)%s*$")
-      if key then env[key] = value:gsub('^["\'](.*)["\']$', "%1") end
-   end
-   f:close()
-   return env
-end
-
-local config = {
-   default_dir = load_env().JOURNAL_DEFAULT_DIR,
-}
-
---- @param opts table|nil { default_dir = string }
-function M.setup(opts)
-   config = vim.tbl_extend("force", config, opts or {})
-end
-
 --- Walks up from the buffer's dir (fallback cwd) looking for Journal/ or Vault/Journal/
---- @return string journal directory with trailing slash
+--- @return string journal directory with trailing slash; <cwd>/Journal/ if none found
 local function find_journal()
    local start = vim.fn.expand("%:p:h")
    if start == "" then start = vim.fn.getcwd() end
@@ -39,9 +15,6 @@ local function find_journal()
       for _, p in ipairs({ dir .. "/Journal", dir .. "/Vault/Journal" }) do
          if vim.fn.isdirectory(p) == 1 then return p .. "/" end
       end
-   end
-   if config.default_dir and config.default_dir ~= "" then
-      return (vim.fn.expand(config.default_dir):gsub("/*$", "/"))
    end
    return vim.fn.getcwd() .. "/Journal/"
 end
