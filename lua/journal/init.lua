@@ -7,7 +7,7 @@ local FORWARD  =  1
 local BACKWARD = -1
 
 --- Walks up from the buffer's dir (fallback cwd) looking for Journal/ or Vault/Journal/
---- @return string journal directory with trailing slash; <cwd>/Vault/Journal/ if none found
+--- @return string journal directory with trailing slash; <cwd>/Journal/ if none found
 local function find_journal()
    local start = vim.fn.expand("%:p:h")
    if start == "" then start = vim.fn.getcwd() end
@@ -16,7 +16,7 @@ local function find_journal()
          if vim.fn.isdirectory(p) == 1 then return p .. "/" end
       end
    end
-   return vim.fn.getcwd() .. "/Vault/Journal/"
+   return vim.fn.getcwd() .. "/Journal/"
 end
 
 --- Jumpes to the previous entry
@@ -35,7 +35,7 @@ end
 function M.jump_to_today()
    local directory = find_journal()
    local stat = vim.loop.fs_stat(directory)
-   local PROMPT_1 = "Vault/Journal/ does not exist, do you want to create Vault/Journal/? y/n: "
+   local PROMPT_1 = "Journal/ does not exsist, do you want to create Journal/? y/n: "
 
    if stat and stat.type == "directory" then
       utils.create_today_entry(directory)

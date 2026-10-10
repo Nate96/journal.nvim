@@ -12,7 +12,7 @@ Requires NeoVim 0.10+.
 ## Journal location
 The journal dir is found by walking up from the current buffer's dir (or cwd). At each parent
 it checks `<dir>/Journal`, then `<dir>/Vault/Journal`; the first hit wins. If none is found,
-`:Today` offers to create `Vault/Journal/` in the current working directory.
+`:Today` offers to create `Journal/` in the current working directory.
 
 Only files named `YYYY-MM-DD*.md` count as entries. Panning keeps the alternate file
 (`<C-^>` returns to where you were) and wipes the previous unmodified entry buffer.
